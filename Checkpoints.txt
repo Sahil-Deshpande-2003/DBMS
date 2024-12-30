@@ -1,0 +1,21 @@
+Scenario
+Suppose you are running an online bookstore. Throughout the day, various transactions occur, such as purchases, stock updates, and customer registrations.
+
+Without Checkpoints
+If the database system crashes at 3 PM, and the last backup was at midnight, all transactions made between midnight and the time of the crash would be lost. The system would need to replay every transaction from the backup point (midnight) until 3 PM once it comes back online, assuming those transactions were logged but not yet committed to disk.
+With Checkpoints
+Assume that the system is configured to create a checkpoint every hour.
+At 1 PM, a checkpoint occurs. The DBMS ensures that all transactions up to that point are written to the disk.
+If a crash happens at 1:45 PM, the system only needs to recover transactions from 1 PM onwards when it restarts. This limits the recovery process to less than an hour's worth of transactions.
+Detailed Example
+Transactions between Checkpoints:
+
+At 12:30 PM, a customer buys a book.
+At 12:45 PM, the inventory is updated.
+At 1:00 PM, a checkpoint occurs. Both the purchase and the inventory update are securely saved to disk.
+Crash and Recovery:
+
+The system crashes at 1:45 PM.
+Upon recovery, the DBMS reviews the transaction log. It notes that all transactions up to the last checkpoint (1:00 PM) are already safely written to the disk.
+The DBMS then applies transactions recorded in the log from 1:00 PM to 1:45 PM to ensure all data is consistent and up to date.
+This process ensures that data integrity is maintained and recovery times are minimized, making the system more reliable and responsive to failures.
